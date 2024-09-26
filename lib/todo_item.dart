@@ -27,14 +27,6 @@ class TodoItem extends StatelessWidget {
       onTap: () {
         onTodoChagned(todo); //tapping the item
       },
-      leading: Checkbox(
-        checkColor: const Color.fromARGB(255, 101, 0, 126),
-        activeColor: const Color.fromARGB(255, 255, 255, 255),
-        value: todo.isCompleted,
-        onChanged: (value) {
-          onTodoChagned(todo); //tapping the checkbox
-        },
-      ), //chekbox
       title: Row(
         children: [
           Expanded(
@@ -42,6 +34,14 @@ class TodoItem extends StatelessWidget {
               todo.name,
               style: _getTextStyle(todo.isCompleted),
             ),
+          ),
+          Checkbox(
+            checkColor: const Color.fromARGB(255, 101, 0, 126),
+            activeColor: const Color.fromARGB(255, 255, 255, 255),
+            value: todo.isCompleted,
+            onChanged: (value) {
+              onTodoChagned(todo); //tapping the checkbox
+            },
           ),
           IconButton(
             onPressed: () {
