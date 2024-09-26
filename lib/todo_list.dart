@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:todo/todo.dart';
+import 'package:provider/provider.dart';
 import 'package:todo/todo_item.dart';
+import 'package:todo/todo_provider.dart';
 
 class TodoList extends StatefulWidget {
   const TodoList({super.key, required this.title});
@@ -12,27 +13,7 @@ class TodoList extends StatefulWidget {
 }
 
 class _TodoListState extends State<TodoList> {
-  final List<Todo> _todos = <Todo>[];
   final TextEditingController _textFieldController = TextEditingController();
-
-  void _addTodoItem(String name) {
-    setState(() {
-      _todos.add(Todo(name: name, isCompleted: false));
-    });
-    _textFieldController.clear();
-  }
-
-  void _handleTodoChange(Todo todo) {
-    setState(() {
-      todo.isCompleted = !todo.isCompleted;
-    });
-  }
-
-  void _handleTodoDelete(Todo todo) {
-    setState(() {
-      _todos.removeWhere((el) => el.name == todo.name);
-    });
-  }
 
   Future<void> _displayDialog() async {
     return showDialog<void>(
@@ -56,7 +37,8 @@ class _TodoListState extends State<TodoList> {
             TextButton(
               onPressed: () {
                 String newTodo = _textFieldController.text;
-                _addTodoItem(newTodo);
+                Provider.of<TodoProvider>(context, listen: false)
+                    .addTodoItem(newTodo);
                 _textFieldController.clear();
                 Navigator.of(context).pop(); // Close the dialog
               },
@@ -70,6 +52,7 @@ class _TodoListState extends State<TodoList> {
 
   @override
   Widget build(BuildContext context) {
+    final todoProvider = Provider.of<TodoProvider>(context);
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
@@ -77,13 +60,21 @@ class _TodoListState extends State<TodoList> {
       ),
       body: ListView(
         padding: const EdgeInsets.symmetric(vertical: 8),
-        children: _todos.map((Todo todo) {
-          return TodoItem(
-            todo: todo,
-            onTodoChagned: _handleTodoChange,
-            onDelete: _handleTodoDelete,
-          );
-        }).toList(),
+        children: List.generate(
+          todoProvider.todos.length,
+          (index) {
+            final todo = todoProvider.todos[index];
+            return TodoItem(
+              todo: todo,
+              onTodoChagned: () {
+                todoProvider.todoChange(index);
+              },
+              onDelete: () {
+                todoProvider.todoDelete(index);
+              },
+            );
+          },
+        ),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {

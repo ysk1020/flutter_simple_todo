@@ -10,8 +10,8 @@ class TodoItem extends StatelessWidget {
   });
 
   final Todo todo;
-  final void Function(Todo todo) onTodoChagned;
-  final void Function(Todo todo) onDelete;
+  final VoidCallback onTodoChagned;
+  final VoidCallback onDelete;
 
   TextStyle? _getTextStyle(bool checked) {
     if (!checked) return null;
@@ -25,7 +25,7 @@ class TodoItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListTile(
       onTap: () {
-        onTodoChagned(todo); //tapping the item
+        onTodoChagned; //tapping the item
       },
       title: Row(
         children: [
@@ -40,12 +40,12 @@ class TodoItem extends StatelessWidget {
             activeColor: const Color.fromARGB(255, 255, 255, 255),
             value: todo.isCompleted,
             onChanged: (value) {
-              onTodoChagned(todo); //tapping the checkbox
+              onTodoChagned(); //tapping the checkbox
             },
           ),
           IconButton(
             onPressed: () {
-              onDelete(todo);
+              onDelete;
             },
             icon: const Icon(
               Icons.delete_forever_outlined,
